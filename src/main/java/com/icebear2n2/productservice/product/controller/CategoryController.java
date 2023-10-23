@@ -1,6 +1,7 @@
 package com.icebear2n2.productservice.product.controller;
 
 import com.icebear2n2.productservice.domain.request.CreateCategoryRequest;
+import com.icebear2n2.productservice.domain.response.CategoryResponse;
 import com.icebear2n2.productservice.product.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,11 +19,12 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<String> createCategory(@RequestBody CreateCategoryRequest createCategoryRequest) {
-        categoryService.createCategory(createCategoryRequest);
-        return new ResponseEntity<>("Category created successfully!", HttpStatus.CREATED);
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CreateCategoryRequest createCategoryRequest) {
+        CategoryResponse categoryResponse = categoryService.createCategory(createCategoryRequest);
+        if (categoryResponse.isSuccess()) {
+            return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(categoryResponse, HttpStatus.BAD_REQUEST);
+        }
     }
-
-
-
 }

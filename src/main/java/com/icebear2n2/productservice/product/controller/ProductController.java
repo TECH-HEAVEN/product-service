@@ -1,6 +1,7 @@
 package com.icebear2n2.productservice.product.controller;
 
 import com.icebear2n2.productservice.domain.request.CreateProductRequest;
+import com.icebear2n2.productservice.domain.response.ProductResponse;
 import com.icebear2n2.productservice.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,13 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> createProduct(@RequestBody CreateProductRequest createProductRequest) {
-        productService.createProduct(createProductRequest);
-        return new ResponseEntity<>("Product created successfully!", HttpStatus.CREATED);
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody CreateProductRequest createProductRequest) {
+        ProductResponse productResponse = productService.createProduct(createProductRequest);
+        if (productResponse.isSuccess()) {
+            return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(productResponse, HttpStatus.BAD_REQUEST);
+        }
     }
+
 }
