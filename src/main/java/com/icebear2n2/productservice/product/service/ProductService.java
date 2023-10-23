@@ -4,9 +4,11 @@ import com.icebear2n2.productservice.domain.entity.Product;
 import com.icebear2n2.productservice.domain.repository.CategoryRepository;
 import com.icebear2n2.productservice.domain.repository.ProductRepository;
 import com.icebear2n2.productservice.domain.request.CreateProductRequest;
+import com.icebear2n2.productservice.domain.response.ProductResponse;
 import com.icebear2n2.productservice.exception.ErrorCode;
-import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,25 +16,31 @@ import org.springframework.stereotype.Service;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
 //    TODO: CREATE PRODUCT
 
-    public void createProduct(CreateProductRequest createProductRequest) {
+    public ProductResponse createProduct(CreateProductRequest createProductRequest) {
         if (!categoryRepository.existsByCategoryName(createProductRequest.getCategoryName())) {
-            throw new ProductServiceException(ErrorCode.CATEGORY_NOT_FOUND);
+            return ProductResponse.failure(ErrorCode.CATEGORY_NOT_FOUND.toString());
         }
 
         if (productRepository.existsByProductName(createProductRequest.getProductName())) {
-            throw new ProductServiceException(ErrorCode.DUPLICATED_PRODUCT_NAME);
+            return ProductResponse.failure(ErrorCode.DUPLICATED_PRODUCT_NAME.toString());
         }
-
 
         try {
-            Product product = productRepository.save(createProductRequest.toEntity());
+            Product product = createProductRequest.toEntity();
             product.setCategory(categoryRepository.findByCategoryName(createProductRequest.getCategoryName()));
-            productRepository.save(product);
+            Product savedProduct = productRepository.save(product);
+            return ProductResponse.success(savedProduct);
         } catch (Exception e) {
-            throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
+            LOGGER.error("Error occurred while creating product", e);
+            return ProductResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
+
+
+//    TODO: READ PRODUCT
+
 }
