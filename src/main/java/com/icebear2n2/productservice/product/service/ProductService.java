@@ -1,5 +1,6 @@
 package com.icebear2n2.productservice.product.service;
 
+import com.icebear2n2.productservice.domain.entity.Category;
 import com.icebear2n2.productservice.domain.entity.Product;
 import com.icebear2n2.productservice.domain.repository.CategoryRepository;
 import com.icebear2n2.productservice.domain.repository.ProductRepository;
@@ -10,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +46,61 @@ public class ProductService {
     }
 
 
-//    TODO: READ PRODUCT
+    public ProductResponse findProductByName(String productName) {
+        Product product = productRepository.findByProductName(productName);
+        if (product != null) {
+            return ProductResponse.success(product);
+        }
+        return ProductResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
+    }
+
+    public List<ProductResponse.ProductData> findProductsByPrice(Integer price) {
+        return productRepository.findByProductPriceGreaterThanEqual(price)
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse.ProductData> findProductsByDiscountPrice(Integer discountPrice) {
+        return productRepository.findByDiscountPriceLessThanEqual(discountPrice)
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse.ProductData> findProductsBySaleStartDate(Timestamp date) {
+        return productRepository.findBySaleStartDateBefore(date)
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse.ProductData> findProductsBySaleEndDate(Timestamp date) {
+        return productRepository.findBySaleEndDateAfter(date)
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse.ProductData> findProductsByCategory(Category category) {
+        return productRepository.findByCategory(category)
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse.ProductData> findProductsAddedAfter(Timestamp createdAt) {
+        return productRepository.findByCreatedAtAfter(createdAt)
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse.ProductData> findProductsBySaleStartAndEndDate(Timestamp startTimestamp, Timestamp endTimestamp) {
+        return productRepository.findBySaleStartDateBeforeAndSaleEndDateAfter(startTimestamp, endTimestamp)
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
 
 }
