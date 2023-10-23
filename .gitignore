@@ -143,5 +143,5 @@ gradle-app.setting
 *.hprof
 
 ## apllication.yml ##
-
+src/main/resources/application.yml
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,gradle,java
