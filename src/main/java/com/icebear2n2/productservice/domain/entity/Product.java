@@ -33,6 +33,10 @@ public class Product {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductDetail> productDetailList;
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    private ProductDetail productDetail;
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

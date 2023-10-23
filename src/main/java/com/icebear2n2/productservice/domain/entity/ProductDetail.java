@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "product_detail")
 @Getter
@@ -15,11 +17,21 @@ import lombok.NoArgsConstructor;
 public class ProductDetail {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productDetailId;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "product_id")
     private Product product;
-    private String productColor;
-    private String productSize;
+    @ElementCollection
+    @CollectionTable(name = "product_colors", joinColumns = @JoinColumn(name = "product_detail_id"))
+    @Column(name = "color")
+    private List<String> productColors;
+
+    @ElementCollection
+    @CollectionTable(name = "product_sizes", joinColumns = @JoinColumn(name = "product_detail_id"))
+    @Column(name = "size")
+    private List<String> productSizes;
     private Integer stockQuantity;
 
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 }
