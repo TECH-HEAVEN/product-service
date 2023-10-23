@@ -6,16 +6,16 @@ import com.icebear2n2.productservice.product.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/category")
 public class CategoryController {
-//    TODO: CRUD : CREATE
+
     private final CategoryService categoryService;
 
     @PostMapping
@@ -26,5 +26,32 @@ public class CategoryController {
         } else {
             return new ResponseEntity<>(categoryResponse, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryResponse.CategoryData>> getCategories(
+            @RequestParam(required = false) Timestamp createdAt,
+            @RequestParam(required = false) Timestamp updatedAt,
+            @RequestParam(required = false) String keyword) {
+
+        if (createdAt != null) {
+            return new ResponseEntity<>(categoryService.findCategoriesCreatedAfter(createdAt), HttpStatus.OK);
+        } else if (updatedAt != null) {
+            return new ResponseEntity<>(categoryService.findCategoriesUpdatedAfter(updatedAt), HttpStatus.OK);
+        } else if (keyword != null) {
+            return new ResponseEntity<>(categoryService.findCategoriesByNameContaining(keyword), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(categoryService.findAllCategories(), HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/ordered-by-name")
+    public ResponseEntity<List<CategoryResponse.CategoryData>> getAllCategoriesOrderedByName() {
+        return new ResponseEntity<>(categoryService.findAllCategoriesOrderedByName(), HttpStatus.OK);
+    }
+
+    @GetMapping("/recent-updates")
+    public ResponseEntity<List<CategoryResponse.CategoryData>> getAllCategoriesOrderedByRecentUpdate() {
+        return new ResponseEntity<>(categoryService.findAllCategoriesOrderedByRecentUpdate(), HttpStatus.OK);
     }
 }
