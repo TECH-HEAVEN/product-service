@@ -15,7 +15,7 @@ public class CreateProductDetailRequest {
     private String productSize;
     private Integer stockQuantity;
 
-    private ProductDetail toEntity() {
+    public ProductDetail toEntity() {
         return ProductDetail.builder()
                 .product(product)
                 .productColor(productColor)

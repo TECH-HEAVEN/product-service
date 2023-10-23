@@ -16,7 +16,7 @@ public class CreateProductRequest {
     private String productName;
     private Integer productPrice;
 
-    private Product toEntity() {
+    public Product toEntity() {
         return Product.builder()
                 .category(category)
                 .productName(productName)

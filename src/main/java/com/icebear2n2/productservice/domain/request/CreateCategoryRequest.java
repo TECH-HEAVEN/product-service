@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class CreateCategoryRequest {
     private String categoryName;
 
-    private Category toEntity() {
+    public Category toEntity() {
         return Category.builder()
                 .categoryName(categoryName)
                 .build();
