@@ -39,4 +39,16 @@ public class Product {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+    public void setDiscountPrice(Integer discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    public void setSaleStartDate(Timestamp saleStartDate) {
+        this.saleStartDate = saleStartDate;
+    }
+
+    public void setSaleEndDate(Timestamp saleEndDate) {
+        this.saleEndDate = saleEndDate;
+    }
 }
