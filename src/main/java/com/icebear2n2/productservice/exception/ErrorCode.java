@@ -14,6 +14,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY NOT FOUND."),
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT NOT FOUND."),
+    PRODUCT_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT DETAIL NOT FOUND."),
     ;
     private final HttpStatus httpStatus;
     private final String message;
