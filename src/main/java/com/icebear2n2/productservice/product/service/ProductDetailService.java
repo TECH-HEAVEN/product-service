@@ -55,12 +55,6 @@ public class ProductDetailService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductDetailResponse.ProductDetailData> findProductDetailsByStockQuantity(Integer quantity) {
-        return productDetailRepository.findByStockQuantityGreaterThan(quantity)
-                .stream()
-                .map(ProductDetailResponse.ProductDetailData::new)
-                .collect(Collectors.toList());
-    }
 
     public List<ProductDetailResponse.ProductDetailData> findProductDetailsUpdatedAfter(Timestamp updatedAt) {
         return productDetailRepository.findByUpdatedAtAfter(updatedAt)

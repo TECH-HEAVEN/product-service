@@ -16,8 +16,6 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, Lo
     //특정 사이즈를 포함하는 제품 상세 정보 조회
     List<ProductDetail> findByProductSizesContains(String size);
 
-    //재고 수량이 특정 값 이상인 제품 상세 정보 조회
-    List<ProductDetail> findByStockQuantityGreaterThan(Integer quantity);
 
     //특정 날짜 이후에 업데이트된 제품 상세 정보 조회
     List<ProductDetail> findByUpdatedAtAfter(Timestamp updatedAt);

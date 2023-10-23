@@ -34,7 +34,11 @@ public class ProductDetail {
     @CollectionTable(name = "product_sizes", joinColumns = @JoinColumn(name = "product_detail_id"))
     @Column(name = "size")
     private List<String> productSizes;
-    private Integer stockQuantity;
+
+    @ElementCollection
+    @CollectionTable(name = "stock_quantities", joinColumns = @JoinColumn(name = "product_detail_id"))
+    @Column(name = "stock_quantity")
+    private List<Integer> stockQuantity;
     @CreationTimestamp
     private Timestamp createdAt;
     @UpdateTimestamp

@@ -26,7 +26,7 @@ public class ProductDetailResponse {
         private Product product;
         private List<String> productColors;
         private List<String> productSizes;
-        private Integer stockQuantity;
+        private List<Integer> stockQuantity;
         private String createdAt;
         private String updatedAt;
 
