@@ -1,5 +1,6 @@
 package com.icebear2n2.productservice.product.service;
 
+import com.icebear2n2.productservice.domain.entity.Product;
 import com.icebear2n2.productservice.domain.repository.CategoryRepository;
 import com.icebear2n2.productservice.domain.repository.ProductRepository;
 import com.icebear2n2.productservice.domain.request.CreateProductRequest;
@@ -17,7 +18,7 @@ public class ProductService {
 //    TODO: CREATE PRODUCT
 
     public void createProduct(CreateProductRequest createProductRequest) {
-        if (!categoryRepository.findByCategoryName(createProductRequest.getCategory())) {
+        if (!categoryRepository.existsByCategoryName(createProductRequest.getCategoryName())) {
             throw new ProductServiceException(ErrorCode.CATEGORY_NOT_FOUND);
         }
 
@@ -25,8 +26,11 @@ public class ProductService {
             throw new ProductServiceException(ErrorCode.DUPLICATED_PRODUCT_NAME);
         }
 
+
         try {
-            productRepository.save(createProductRequest.toEntity());
+            Product product = productRepository.save(createProductRequest.toEntity());
+            product.setCategory(categoryRepository.findByCategoryName(createProductRequest.getCategoryName()));
+            productRepository.save(product);
         } catch (Exception e) {
             throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
