@@ -12,13 +12,12 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateProductRequest {
-    private Category category;
+    private String categoryName;
     private String productName;
     private Integer productPrice;
 
     public Product toEntity() {
         return Product.builder()
-                .category(category)
                 .productName(productName)
                 .productPrice(productPrice)
                 .build();
