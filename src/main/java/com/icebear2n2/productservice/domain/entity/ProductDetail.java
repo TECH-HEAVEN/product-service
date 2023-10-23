@@ -1,11 +1,15 @@
 package com.icebear2n2.productservice.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
@@ -17,8 +21,9 @@ import java.util.List;
 public class ProductDetail {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productDetailId;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
     @ElementCollection
     @CollectionTable(name = "product_colors", joinColumns = @JoinColumn(name = "product_detail_id"))
@@ -30,6 +35,10 @@ public class ProductDetail {
     @Column(name = "size")
     private List<String> productSizes;
     private Integer stockQuantity;
+    @CreationTimestamp
+    private Timestamp createdAt;
+    @UpdateTimestamp
+    private Timestamp updatedAt;
 
     public void setProduct(Product product) {
         this.product = product;

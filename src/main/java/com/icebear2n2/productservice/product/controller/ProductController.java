@@ -1,25 +1,59 @@
 package com.icebear2n2.productservice.product.controller;
 
 import com.icebear2n2.productservice.domain.request.CreateProductRequest;
+import com.icebear2n2.productservice.domain.response.ProductResponse;
 import com.icebear2n2.productservice.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/product")
 public class ProductController {
-    //    TODO: CRUD : CREATE
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> createProduct(@RequestBody CreateProductRequest createProductRequest) {
-        productService.createProduct(createProductRequest);
-        return new ResponseEntity<>("Product created successfully!", HttpStatus.CREATED);
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody CreateProductRequest createProductRequest) {
+        ProductResponse productResponse = productService.createProduct(createProductRequest);
+        if (productResponse.isSuccess()) {
+            return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(productResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getProducts(
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) Integer price,
+            @RequestParam(required = false) Integer discountPrice,
+            @RequestParam(required = false) Timestamp saleStartDate,
+            @RequestParam(required = false) Timestamp saleEndDate,
+            @RequestParam(required = false) Timestamp createdAt,
+            @RequestParam(required = false) Timestamp saleStartTimestamp,
+            @RequestParam(required = false) Timestamp saleEndTimestamp) {
+
+        if (productName != null) {
+            return new ResponseEntity<>(productService.findProductByName(productName), HttpStatus.OK);
+        } else if (price != null) {
+            return new ResponseEntity<>(productService.findProductsByPrice(price), HttpStatus.OK);
+        } else if (discountPrice != null) {
+            return new ResponseEntity<>(productService.findProductsByDiscountPrice(discountPrice), HttpStatus.OK);
+        } else if (saleStartDate != null) {
+            return new ResponseEntity<>(productService.findProductsBySaleStartDate(saleStartDate), HttpStatus.OK);
+        } else if (saleEndDate != null) {
+            return new ResponseEntity<>(productService.findProductsBySaleEndDate(saleEndDate), HttpStatus.OK);
+        } else if (createdAt != null) {
+            return new ResponseEntity<>(productService.findProductsAddedAfter(createdAt), HttpStatus.OK);
+        } else if (saleStartTimestamp != null && saleEndTimestamp != null) {
+            return new ResponseEntity<>(productService.findProductsBySaleStartAndEndDate(saleStartTimestamp, saleEndTimestamp), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+        }
     }
 }
