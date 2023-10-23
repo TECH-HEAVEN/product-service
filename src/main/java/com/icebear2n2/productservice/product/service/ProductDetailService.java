@@ -83,4 +83,11 @@ public class ProductDetailService {
                 .map(ProductDetailResponse.ProductDetailData::new)
                 .collect(Collectors.toList());
     }
+
+    public List<ProductDetailResponse.ProductDetailData> getAllProductDetails() {
+       return productDetailRepository.findAll()
+                .stream()
+                .map(ProductDetailResponse.ProductDetailData::new)
+                .collect(Collectors.toList());
+    }
 }

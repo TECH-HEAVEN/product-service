@@ -103,4 +103,11 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductResponse.ProductData> getAllProducts() {
+        return  productRepository.findAll()
+                .stream()
+                .map(ProductResponse.ProductData::new)
+                .collect(Collectors.toList());
+    }
+
 }
