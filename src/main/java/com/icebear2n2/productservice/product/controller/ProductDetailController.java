@@ -33,8 +33,7 @@ public class ProductDetailController {
             @RequestParam(required = false) String color,
             @RequestParam(required = false) String size,
             @RequestParam(required = false) Integer quantity,
-            @RequestParam(required = false) Timestamp updatedAt,
-            @RequestBody(required = false) Product product) {
+            @RequestParam(required = false) Timestamp updatedAt) {
 
         if (color != null && size == null) {
             return new ResponseEntity<>(productDetailService.findProductDetailsByColor(color), HttpStatus.OK);
@@ -44,8 +43,6 @@ public class ProductDetailController {
             return new ResponseEntity<>(productDetailService.findProductDetailsByStockQuantity(quantity), HttpStatus.OK);
         } else if (updatedAt != null) {
             return new ResponseEntity<>(productDetailService.findProductDetailsUpdatedAfter(updatedAt), HttpStatus.OK);
-        } else if (product != null) {
-            return new ResponseEntity<>(productDetailService.findDetailByProduct(product), HttpStatus.OK);
         } else if (color != null) {
             return new ResponseEntity<>(productDetailService.findProductDetailsByColorAndSize(color, size), HttpStatus.OK);
         } else {

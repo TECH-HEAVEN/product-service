@@ -1,5 +1,6 @@
 package com.icebear2n2.productservice.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +21,9 @@ import java.util.List;
 public class ProductDetail {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productDetailId;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
     @ElementCollection
     @CollectionTable(name = "product_colors", joinColumns = @JoinColumn(name = "product_detail_id"))

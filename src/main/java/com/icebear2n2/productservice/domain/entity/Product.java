@@ -1,5 +1,6 @@
 package com.icebear2n2.productservice.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,8 +34,9 @@ public class Product {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    private ProductDetail productDetail;
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private List<ProductDetail> productDetails;
 
     public void setCategory(Category category) {
         this.category = category;
