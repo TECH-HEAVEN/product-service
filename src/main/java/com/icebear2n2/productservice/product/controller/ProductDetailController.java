@@ -32,15 +32,13 @@ public class ProductDetailController {
     public ResponseEntity<?> getProductDetails(
             @RequestParam(required = false) String color,
             @RequestParam(required = false) String size,
-            @RequestParam(required = false) Integer quantity,
+            @RequestParam(required = false) List<Integer> quantity,
             @RequestParam(required = false) Timestamp updatedAt) {
 
         if (color != null && size == null) {
             return new ResponseEntity<>(productDetailService.findProductDetailsByColor(color), HttpStatus.OK);
         } else if (size != null && color == null) {
             return new ResponseEntity<>(productDetailService.findProductDetailsBySize(size), HttpStatus.OK);
-        } else if (quantity != null) {
-            return new ResponseEntity<>(productDetailService.findProductDetailsByStockQuantity(quantity), HttpStatus.OK);
         } else if (updatedAt != null) {
             return new ResponseEntity<>(productDetailService.findProductDetailsUpdatedAfter(updatedAt), HttpStatus.OK);
         } else if (color != null) {

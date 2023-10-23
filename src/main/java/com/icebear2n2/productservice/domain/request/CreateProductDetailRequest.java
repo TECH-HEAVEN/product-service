@@ -13,7 +13,7 @@ public class CreateProductDetailRequest {
     private String  productName;
     private List<String> productColors;
     private List<String> productSizes;
-    private Integer stockQuantity;
+    private List<Integer> stockQuantity;
 
     public ProductDetail toEntity() {
         return ProductDetail.builder()
