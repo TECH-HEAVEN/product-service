@@ -1,6 +1,6 @@
 package com.icebear2n2.productservice.product.controller;
 
-import com.icebear2n2.productservice.domain.request.CreateCategoryRequest;
+import com.icebear2n2.productservice.domain.request.CategoryRequest;
 import com.icebear2n2.productservice.domain.response.CategoryResponse;
 import com.icebear2n2.productservice.product.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CreateCategoryRequest createCategoryRequest) {
-        CategoryResponse categoryResponse = categoryService.createCategory(createCategoryRequest);
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryRequest) {
+        CategoryResponse categoryResponse = categoryService.createCategory(categoryRequest);
         if (categoryResponse.isSuccess()) {
             return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
         } else {
@@ -53,5 +53,15 @@ public class CategoryController {
     @GetMapping("/recent-updates")
     public ResponseEntity<List<CategoryResponse.CategoryData>> getAllCategoriesOrderedByRecentUpdate() {
         return new ResponseEntity<>(categoryService.findAllCategoriesOrderedByRecentUpdate(), HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{categoryId}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Long categoryId, @RequestBody CategoryRequest categoryRequest) {
+        CategoryResponse categoryResponse = categoryService.updateCategory(categoryId, categoryRequest);
+        if (categoryResponse.isSuccess()) {
+            return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(categoryResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 }

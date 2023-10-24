@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateProductDetailRequest {
+public class ProductDetailRequest {
     private String  productName;
     private List<String> productColors;
     private List<String> productSizes;

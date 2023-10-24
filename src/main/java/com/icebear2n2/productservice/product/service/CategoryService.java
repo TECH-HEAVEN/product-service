@@ -1,7 +1,8 @@
 package com.icebear2n2.productservice.product.service;
 
+import com.icebear2n2.productservice.domain.entity.Category;
 import com.icebear2n2.productservice.domain.repository.CategoryRepository;
-import com.icebear2n2.productservice.domain.request.CreateCategoryRequest;
+import com.icebear2n2.productservice.domain.request.CategoryRequest;
 import com.icebear2n2.productservice.domain.response.CategoryResponse;
 import com.icebear2n2.productservice.exception.ErrorCode;
 import com.icebear2n2.productservice.exception.ProductServiceException;
@@ -17,13 +18,13 @@ import java.util.stream.Collectors;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public CategoryResponse createCategory(CreateCategoryRequest createCategoryRequest) {
-        if (categoryRepository.existsByCategoryName(createCategoryRequest.getCategoryName())) {
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
+        if (categoryRepository.existsByCategoryName(categoryRequest.getCategoryName())) {
             return CategoryResponse.failure(ErrorCode.DUPLICATED_CATEGORY_NAME.toString());
         }
 
         try {
-            return CategoryResponse.success(categoryRepository.save(createCategoryRequest.toEntity()));
+            return CategoryResponse.success(categoryRepository.save(categoryRequest.toEntity()));
         } catch (Exception e) {
             return CategoryResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
@@ -68,4 +69,30 @@ public class CategoryService {
         return categoryRepository.findAll().stream().map(CategoryResponse.CategoryData::new).collect(Collectors.toList());
     }
 
+//    TODO: UPDATE
+
+    public CategoryResponse updateCategory(Long categoryId, CategoryRequest categoryRequest) {
+        if (!categoryRepository.existsById(categoryId)) {
+            return CategoryResponse.failure(ErrorCode.CATEGORY_NOT_FOUND.toString());
+        }
+
+        List<Category> categoriesWithSameName = categoryRepository.findByCategoryNameContaining(categoryRequest.getCategoryName());
+
+        boolean isNameTakenByAnotherCategory = categoriesWithSameName.stream()
+                .anyMatch(category -> !category.getCategoryId().equals(categoryId));
+
+        if (isNameTakenByAnotherCategory) {
+            return CategoryResponse.failure(ErrorCode.DUPLICATED_CATEGORY_NAME.toString());
+        }
+
+        try {
+            Category existingCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new ProductServiceException(ErrorCode.CATEGORY_NOT_FOUND));
+            existingCategory.updateWith(categoryRequest.toEntity());
+            categoryRepository.save(existingCategory);
+            return CategoryResponse.success(existingCategory);
+
+        } catch (Exception e) {
+            return CategoryResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
+        }
+    }
 }

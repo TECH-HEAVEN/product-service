@@ -44,6 +44,6 @@ public class ProductDetailResponse {
         return new ProductDetailResponse(true, "Success", new ProductDetailData(productDetail));
     }
     public static ProductDetailResponse failure(String message) {
-        return new ProductDetailResponse(false, "Failure", null);
+        return new ProductDetailResponse(false, message, null);
     }
 }

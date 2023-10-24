@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCategoryRequest {
+public class CategoryRequest {
     private String categoryName;
 
     public Category toEntity() {
