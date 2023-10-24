@@ -3,6 +3,7 @@ package com.icebear2n2.productservice.product.controller;
 import com.icebear2n2.productservice.domain.request.ProductDetailRequest;
 import com.icebear2n2.productservice.domain.response.ProductDetailResponse;
 import com.icebear2n2.productservice.product.service.ProductDetailService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,13 @@ import java.sql.Timestamp;
 public class ProductDetailController {
     private final ProductDetailService productDetailService;
 
+    /**
+     * 새로운 상품 상세 정보를 생성합니다.
+     *
+     * @param productDetailRequest 상품 상세 정보 요청 본문.
+     * @return 상태와 데이터를 포함한 응답.
+     */
+    @Operation(summary = "상품 상세 정보 생성")
     @PostMapping
     public ResponseEntity<ProductDetailResponse> createProductDetail(@RequestBody ProductDetailRequest productDetailRequest) {
         ProductDetailResponse productDetailResponse = productDetailService.createProductDetail(productDetailRequest);
@@ -26,6 +34,12 @@ public class ProductDetailController {
         }
     }
 
+    /**
+     * 색상, 사이즈, 업데이트 시간 등의 조건을 기반으로 상품 상세 정보를 검색합니다.
+     *
+     * @return 조건에 맞는 상품 상세 정보 목록.
+     */
+    @Operation(summary = "상품 상세 정보 검색")
     @GetMapping
     public ResponseEntity<?> getProductDetails(
             @RequestParam(required = false) String color,
@@ -45,6 +59,14 @@ public class ProductDetailController {
         }
     }
 
+    /**
+     * 기존 상품 상세 정보를 업데이트합니다.
+     *
+     * @param productDetailId 업데이트할 상품 상세 정보의 ID.
+     * @param productDetailRequest 상품 상세 정보 요청 본문.
+     * @return 상태와 데이터를 포함한 응답.
+     */
+    @Operation(summary = "상품 상세 정보 업데이트")
     @PutMapping("/{productDetailId}")
     public ResponseEntity<ProductDetailResponse> updateProductDetail(@PathVariable("productDetailId") Long productDetailId, @RequestBody ProductDetailRequest productDetailRequest) {
         ProductDetailResponse productDetailResponse = productDetailService.updateProductDetail(productDetailId, productDetailRequest);
@@ -56,6 +78,13 @@ public class ProductDetailController {
         }
     }
 
+    /**
+     * 상품 상세 정보를 삭제합니다.
+     *
+     * @param productDetailId 삭제할 상품 상세 정보의 ID.
+     * @return 삭제 성공 메시지와 함께하는 응답.
+     */
+    @Operation(summary = "상품 상세 정보 삭제")
     @DeleteMapping("/{productDetailId}")
     public ResponseEntity<String> removeProductDetail(@PathVariable("productDetailId") Long productDetailId) {
         productDetailService.removeProductDetail(productDetailId);
