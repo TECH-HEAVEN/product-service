@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/category")
+@RequestMapping("/api/v1/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -45,17 +45,17 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/ordered-by-name")
+    @GetMapping("/order-by-name")
     public ResponseEntity<List<CategoryResponse.CategoryData>> getAllCategoriesOrderedByName() {
         return new ResponseEntity<>(categoryService.findAllCategoriesOrderedByName(), HttpStatus.OK);
     }
 
-    @GetMapping("/recent-updates")
+    @GetMapping("/recent")
     public ResponseEntity<List<CategoryResponse.CategoryData>> getAllCategoriesOrderedByRecentUpdate() {
         return new ResponseEntity<>(categoryService.findAllCategoriesOrderedByRecentUpdate(), HttpStatus.OK);
     }
 
-    @PutMapping("/update/{categoryId}")
+    @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("categoryId") Long categoryId, @RequestBody CategoryRequest categoryRequest) {
         CategoryResponse categoryResponse = categoryService.updateCategory(categoryId, categoryRequest);
         if (categoryResponse.isSuccess()) {
@@ -63,5 +63,11 @@ public class CategoryController {
         } else {
             return new ResponseEntity<>(categoryResponse, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<String> removeCategory(@PathVariable("categoryId") Long categoryId) {
+        categoryService.removeCategory(categoryId);
+        return new ResponseEntity<>("Category removed successfully.", HttpStatus.OK);
     }
 }

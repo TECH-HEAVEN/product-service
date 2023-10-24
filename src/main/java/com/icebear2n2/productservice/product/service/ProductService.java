@@ -1,7 +1,9 @@
 package com.icebear2n2.productservice.product.service;
 
 import com.icebear2n2.productservice.domain.entity.Product;
+import com.icebear2n2.productservice.domain.entity.ProductDetail;
 import com.icebear2n2.productservice.domain.repository.CategoryRepository;
+import com.icebear2n2.productservice.domain.repository.ProductDetailRepository;
 import com.icebear2n2.productservice.domain.repository.ProductRepository;
 import com.icebear2n2.productservice.domain.request.ProductRequest;
 import com.icebear2n2.productservice.domain.response.ProductResponse;
@@ -10,6 +12,7 @@ import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductDetailRepository productDetailRepository;
     private final CategoryRepository categoryRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
@@ -130,5 +134,31 @@ public class ProductService {
             LOGGER.info("ERROR OCCURS {}", e.toString());
             return ProductResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
+    }
+
+    public void removeProduct(Long productId) {
+        if (!productRepository.existsByProductId(productId)) {
+            throw new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND);
+        }
+        try {
+            productRepository.deleteById(productId);
+        } catch (DataIntegrityViolationException e) {
+            throw new ProductServiceException(ErrorCode.PRODUCT_HAS_RELATED_PRODUCT_DETAIL);
+        } catch (Exception e) {
+            throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void removeProductAndDetails(Long productId) {
+        // Step1: 상품에 연결된 상세 정보 찾기
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // Step2: 상품 관련 상세 정보 전체 삭제
+        List<ProductDetail> productDetails = product.getProductDetails();
+        productDetailRepository.deleteAll(productDetails);
+
+        // Step3: 상품 삭제
+        productRepository.delete(product);
     }
 }

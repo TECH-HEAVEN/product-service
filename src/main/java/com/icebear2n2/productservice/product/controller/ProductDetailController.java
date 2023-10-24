@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/product-detail")
+@RequestMapping("/api/v1/products/details")
 public class ProductDetailController {
     private final ProductDetailService productDetailService;
 
@@ -45,7 +45,7 @@ public class ProductDetailController {
         }
     }
 
-    @PutMapping("/update/{productDetailId}")
+    @PutMapping("/{productDetailId}")
     public ResponseEntity<ProductDetailResponse> updateProductDetail(@PathVariable("productDetailId") Long productDetailId, @RequestBody ProductDetailRequest productDetailRequest) {
         ProductDetailResponse productDetailResponse = productDetailService.updateProductDetail(productDetailId, productDetailRequest);
 
@@ -56,4 +56,9 @@ public class ProductDetailController {
         }
     }
 
+    @DeleteMapping("/{productDetailId}")
+    public ResponseEntity<String> removeProductDetail(@PathVariable("productDetailId") Long productDetailId) {
+        productDetailService.removeProductDetail(productDetailId);
+        return new ResponseEntity<>("Product Detail removed successfully.", HttpStatus.OK);
+    }
 }
