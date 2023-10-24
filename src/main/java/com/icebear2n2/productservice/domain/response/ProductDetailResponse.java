@@ -32,8 +32,8 @@ public class ProductDetailResponse {
 
         public ProductDetailData(ProductDetail productDetail) {
             this.product = productDetail.getProduct();
-            this.productColors = productDetail.getProductColors();
-            this.productSizes = productDetail.getProductSizes();
+            this.productColors = productDetail.getProductColors() != null ? productDetail.getProductColors() : null;
+            this.productSizes = productDetail.getProductSizes() != null ? productDetail.getProductSizes() : null;
             this.stockQuantity = productDetail.getStockQuantity();
             this.createdAt = productDetail.getCreatedAt().toString();
             this.updatedAt = productDetail.getUpdatedAt().toString();
