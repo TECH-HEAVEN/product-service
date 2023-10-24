@@ -3,6 +3,7 @@ package com.icebear2n2.productservice.domain.request;
 import com.icebear2n2.productservice.domain.entity.Category;
 import com.icebear2n2.productservice.domain.entity.Product;
 import com.icebear2n2.productservice.domain.repository.CategoryRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +11,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "상품 생성 및 업데이트 요청 모델")
 public class ProductRequest {
+
+    @Schema(description = "카테고리 이름", example = "프로그래밍 도서")
     private String categoryName;
+
+    @Schema(description = "상품 이름", example = "스프링부트 교과서")
     private String productName;
+
+    @Schema(description = "상품 가격", example = "20000")
     private Integer productPrice;
 
 

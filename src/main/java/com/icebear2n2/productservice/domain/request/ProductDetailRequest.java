@@ -2,6 +2,7 @@ package com.icebear2n2.productservice.domain.request;
 import com.icebear2n2.productservice.domain.entity.Product;
 import com.icebear2n2.productservice.domain.entity.ProductDetail;
 import com.icebear2n2.productservice.domain.repository.ProductRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +12,19 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "상품 상세 정보 생성 및 업데이트 요청 모델")
 public class ProductDetailRequest {
+
+    @Schema(description = "상품 이름", example = "기계식 키보드")
     private String productName;
+
+    @Schema(description = "상품 색상 리스트", example = "[\"Red\", \"Blue\"]")
     private List<String> productColors;
+
+    @Schema(description = "상품 사이즈 리스트", example = "[\"S\", \"M\", \"L\"]")
     private List<String> productSizes;
+
+    @Schema(description = "재고 수량 리스트", example = "[100, 50, 30]")
     private List<Integer> stockQuantity;
 
     public ProductDetail toEntity() {
