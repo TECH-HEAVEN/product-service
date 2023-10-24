@@ -76,26 +76,21 @@ public class ProductDetailService {
     }
 
     public ProductDetailResponse updateProductDetail(Long productDetailId, ProductDetailRequest productDetailRequest) {
+
+        if (!productDetailRepository.existsById(productDetailId)) {
+            return ProductDetailResponse.failure(ErrorCode.PRODUCT_DETAIL_NOT_FOUND.toString());
+        }
+
         try {
-
-            ProductDetail productDetail = productDetailRepository.findById(productDetailId)
-                    .orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
-
-
-            Product product = productDetailRequest.toEntity().getProduct();
-            if (product.getProductId() == null || !productRepository.existsByProductId(product.getProductId())) {
-                throw new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND);
+            ProductDetail existingProductDetail = productDetailRepository.findById(productDetailId).orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+            if (!existingProductDetail.getProduct().getProductName().equals(productDetailRequest.getProductName())) {
+                return ProductDetailResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
             }
 
-            productDetail.updateWith(product, productDetailRequest.getProductColors(),
-                    productDetailRequest.getProductSizes(), productDetailRequest.getStockQuantity());
-
-            productDetailRepository.save(productDetail);
-
-            return ProductDetailResponse.success(productDetail);
-
+            productDetailRequest.updateProductDetailIfNotNull(existingProductDetail, productRepository);
+            productDetailRepository.save(existingProductDetail);
+            return ProductDetailResponse.success(existingProductDetail);
         } catch (Exception e) {
-
             return ProductDetailResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }

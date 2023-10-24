@@ -111,28 +111,24 @@ public class ProductService {
 
     //   TODO: UPDATE
     public ProductResponse updateProduct(Long productId, ProductRequest productRequest) {
+
+        if (!productRepository.existsByProductId(productId)) {
+            return ProductResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
+        }
+
+        if (productRepository.existsByProductName(productRequest.getProductName())) {
+            return ProductResponse.failure(ErrorCode.DUPLICATED_PRODUCT_NAME.toString());
+        }
+
         try {
-            Product product = productRepository.findById(productId)
+            Product existingProduct = productRepository.findById(productId)
                     .orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND));
-
-            if (!product.getProductName().equals(productRequest.getProductName()) &&
-                    productRepository.existsByProductName(productRequest.getProductName())) {
-                throw new ProductServiceException(ErrorCode.DUPLICATED_PRODUCT_NAME);
-            }
-
-            if (!categoryRepository.existsByCategoryName(productRequest.getCategoryName())) {
-                return ProductResponse.failure(ErrorCode.CATEGORY_NOT_FOUND.toString());
-            }
-
-            product.updateWith(productRequest.toEntity().getCategory(), productRequest.getProductName(), productRequest.getProductPrice());
-            productRepository.save(product);
-
-            return ProductResponse.success(product);
+            productRequest.updateProductIfNotNull(existingProduct, categoryRepository);
+            productRepository.save(existingProduct);
+            return ProductResponse.success(existingProduct);
         } catch (Exception e) {
-
+            LOGGER.info("ERROR OCCURS {}", e.toString());
             return ProductResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
-
-
 }

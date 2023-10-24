@@ -86,11 +86,11 @@ public class CategoryService {
         }
 
         try {
-            Category existingCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new ProductServiceException(ErrorCode.CATEGORY_NOT_FOUND));
-            existingCategory.updateWith(categoryRequest.toEntity());
+            Category existingCategory = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ProductServiceException(ErrorCode.CATEGORY_NOT_FOUND));
+            categoryRequest.updateCategoryIfNotNull(existingCategory);
             categoryRepository.save(existingCategory);
             return CategoryResponse.success(existingCategory);
-
         } catch (Exception e) {
             return CategoryResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
