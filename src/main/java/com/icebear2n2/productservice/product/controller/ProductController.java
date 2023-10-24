@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/product")
+@RequestMapping("/api/v1/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -59,7 +59,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/update/{productId}")
+    @PutMapping("/{productId}")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = productService.updateProduct(productId, productRequest);
         if (productResponse.isSuccess()) {
@@ -67,5 +67,17 @@ public class ProductController {
         } else {
             return new ResponseEntity<>(productResponse, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<String> removeProduct(@PathVariable("productId") Long productId) {
+        productService.removeProduct(productId);
+        return new ResponseEntity<>("Product removed successfully.", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{productId}/details")
+    public ResponseEntity<String> removeProductAndDetails(@PathVariable("productId") Long productId) {
+        productService.removeProductAndDetails(productId);
+        return new ResponseEntity<>("Product and product Details removed successfully.", HttpStatus.OK);
     }
 }

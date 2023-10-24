@@ -7,6 +7,7 @@ import com.icebear2n2.productservice.domain.response.CategoryResponse;
 import com.icebear2n2.productservice.exception.ErrorCode;
 import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -93,6 +94,19 @@ public class CategoryService {
             return CategoryResponse.success(existingCategory);
         } catch (Exception e) {
             return CategoryResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
+        }
+    }
+
+    public void removeCategory(Long categoryId) {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new ProductServiceException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+        try {
+            categoryRepository.deleteById(categoryId);
+        } catch (DataIntegrityViolationException e) {
+            throw new ProductServiceException(ErrorCode.CATEGORY_HAS_RELATED_PRODUCTS);
+        } catch (Exception e) {
+            throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -95,5 +95,15 @@ public class ProductDetailService {
         }
     }
 
+    public void removeProductDetail(Long productDetailId) {
+        if (!productDetailRepository.existsById(productDetailId)) {
+            throw new ProductServiceException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
+        }
+        try {
+            productDetailRepository.deleteById(productDetailId);
+        } catch (Exception e) {
+            throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
