@@ -16,4 +16,10 @@ public class CategoryRequest {
                 .categoryName(categoryName)
                 .build();
     }
+
+    public void updateCategoryIfNotNull(Category category) {
+        if (this.categoryName != null) {
+            category.setCategoryName(this.categoryName);
+        }
+    }
 }
