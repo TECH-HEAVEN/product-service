@@ -1,12 +1,12 @@
 package com.icebear2n2.productservice.product.service;
 
-import com.icebear2n2.productservice.domain.entity.Category;
 import com.icebear2n2.productservice.domain.entity.Product;
 import com.icebear2n2.productservice.domain.repository.CategoryRepository;
 import com.icebear2n2.productservice.domain.repository.ProductRepository;
-import com.icebear2n2.productservice.domain.request.CreateProductRequest;
+import com.icebear2n2.productservice.domain.request.ProductRequest;
 import com.icebear2n2.productservice.domain.response.ProductResponse;
 import com.icebear2n2.productservice.exception.ErrorCode;
+import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,20 +23,19 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
-//    TODO: CREATE PRODUCT
 
-    public ProductResponse createProduct(CreateProductRequest createProductRequest) {
-        if (!categoryRepository.existsByCategoryName(createProductRequest.getCategoryName())) {
+    public ProductResponse createProduct(ProductRequest productRequest) {
+        if (!categoryRepository.existsByCategoryName(productRequest.getCategoryName())) {
             return ProductResponse.failure(ErrorCode.CATEGORY_NOT_FOUND.toString());
         }
 
-        if (productRepository.existsByProductName(createProductRequest.getProductName())) {
+        if (productRepository.existsByProductName(productRequest.getProductName())) {
             return ProductResponse.failure(ErrorCode.DUPLICATED_PRODUCT_NAME.toString());
         }
 
         try {
-            Product product = createProductRequest.toEntity();
-            product.setCategory(categoryRepository.findByCategoryName(createProductRequest.getCategoryName()));
+            Product product = productRequest.toEntity();
+            product.setCategory(categoryRepository.findByCategoryName(productRequest.getCategoryName()));
             Product savedProduct = productRepository.save(product);
             return ProductResponse.success(savedProduct);
         } catch (Exception e) {
@@ -82,8 +81,8 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductResponse.ProductData> findProductsByCategory(Category category) {
-        return productRepository.findByCategory(category)
+    public List<ProductResponse.ProductData> findProductsByCategory(String categoryName) {
+        return productRepository.findByCategoryContaining(categoryName)
                 .stream()
                 .map(ProductResponse.ProductData::new)
                 .collect(Collectors.toList());
@@ -104,10 +103,32 @@ public class ProductService {
     }
 
     public List<ProductResponse.ProductData> getAllProducts() {
-        return  productRepository.findAll()
+        return productRepository.findAll()
                 .stream()
                 .map(ProductResponse.ProductData::new)
                 .collect(Collectors.toList());
     }
 
+    //   TODO: UPDATE
+    public ProductResponse updateProduct(Long productId, ProductRequest productRequest) {
+
+        if (!productRepository.existsByProductId(productId)) {
+            return ProductResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
+        }
+
+        if (productRepository.existsByProductName(productRequest.getProductName())) {
+            return ProductResponse.failure(ErrorCode.DUPLICATED_PRODUCT_NAME.toString());
+        }
+
+        try {
+            Product existingProduct = productRepository.findById(productId)
+                    .orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND));
+            productRequest.updateProductIfNotNull(existingProduct, categoryRepository);
+            productRepository.save(existingProduct);
+            return ProductResponse.success(existingProduct);
+        } catch (Exception e) {
+            LOGGER.info("ERROR OCCURS {}", e.toString());
+            return ProductResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
+        }
+    }
 }

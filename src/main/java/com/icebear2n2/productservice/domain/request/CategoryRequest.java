@@ -8,12 +8,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCategoryRequest {
+public class CategoryRequest {
     private String categoryName;
 
     public Category toEntity() {
         return Category.builder()
                 .categoryName(categoryName)
                 .build();
+    }
+
+    public void updateCategoryIfNotNull(Category category) {
+        if (this.categoryName != null) {
+            category.setCategoryName(this.categoryName);
+        }
     }
 }

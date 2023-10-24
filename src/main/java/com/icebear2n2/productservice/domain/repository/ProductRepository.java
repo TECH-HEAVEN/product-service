@@ -1,6 +1,5 @@
 package com.icebear2n2.productservice.domain.repository;
 
-import com.icebear2n2.productservice.domain.entity.Category;
 import com.icebear2n2.productservice.domain.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    boolean existsByProductId(Long productId);
     boolean existsByProductName(String ProductName);
     Product findByProductName(String productName);
 
@@ -24,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findBySaleEndDateAfter(Timestamp date);
 
     //특정 카테고리의 제품 조회
-    List<Product> findByCategory(Category category);
+    List<Product> findByCategoryContaining(String categoryName);
 
     //특정 날짜 이후에 추가된 제품 조회
     List<Product> findByCreatedAtAfter(Timestamp createdAt);
