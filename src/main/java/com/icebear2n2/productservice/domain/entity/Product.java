@@ -42,9 +42,11 @@ public class Product {
         this.category = category;
     }
 
-    public void updateWith(Category category, String productName, Integer productPrice) {
-        this.category = category;
+    public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public void setProductPrice(Integer productPrice) {
         this.productPrice = productPrice;
     }
 }

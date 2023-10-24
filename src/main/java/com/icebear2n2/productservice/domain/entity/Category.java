@@ -25,7 +25,7 @@ public class Category {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
-    public void updateWith(Category updatedCategory) {
-        this.categoryName = updatedCategory.getCategoryName();
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

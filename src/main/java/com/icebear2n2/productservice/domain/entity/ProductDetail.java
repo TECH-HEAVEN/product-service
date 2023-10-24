@@ -48,10 +48,4 @@ public class ProductDetail {
         this.product = product;
     }
 
-    public void updateWith(Product product, List<String> productColors, List<String> productSizes, List<Integer> stockQuantity) {
-        this.product = product;
-        this.productColors = productColors;
-        this.productSizes = productSizes;
-        this.stockQuantity = stockQuantity;
-    }
 }
