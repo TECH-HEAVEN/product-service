@@ -120,6 +120,10 @@ public class ProductService {
             return ProductResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
         }
 
+        if (!categoryRepository.existsByCategoryName(productRequest.getCategoryName())) {
+            return ProductResponse.failure(ErrorCode.CATEGORY_NOT_FOUND.toString());
+        }
+
         if (productRepository.existsByProductName(productRequest.getProductName())) {
             return ProductResponse.failure(ErrorCode.DUPLICATED_PRODUCT_NAME.toString());
         }
