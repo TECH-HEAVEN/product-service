@@ -75,14 +75,14 @@ public class ProductDetailService {
                 .collect(Collectors.toList());
     }
 
-    public ProductDetailResponse updateProductDetail(Long productDetailId, ProductDetailRequest productDetailRequest) {
+    public ProductDetailResponse updateProductDetail(ProductDetailRequest productDetailRequest) {
 
-        if (!productDetailRepository.existsById(productDetailId)) {
+        if (!productDetailRepository.existsById(productDetailRequest.getProductDetailId())) {
             return ProductDetailResponse.failure(ErrorCode.PRODUCT_DETAIL_NOT_FOUND.toString());
         }
 
         try {
-            ProductDetail existingProductDetail = productDetailRepository.findById(productDetailId).orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+            ProductDetail existingProductDetail = productDetailRepository.findById(productDetailRequest.getProductDetailId()).orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
             if (!existingProductDetail.getProduct().getProductName().equals(productDetailRequest.getProductName())) {
                 return ProductDetailResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
             }

@@ -14,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "상품 상세 정보 생성 및 업데이트 요청 모델")
 public class ProductDetailRequest {
+    @Schema(description = "상품 상세 정보 ID")
+    private Long productDetailId;
 
     @Schema(description = "상품 이름", example = "기계식 키보드")
     private String productName;

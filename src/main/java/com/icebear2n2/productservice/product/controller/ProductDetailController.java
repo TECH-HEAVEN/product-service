@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/products/details")
+@RequestMapping("/details")
 public class ProductDetailController {
     private final ProductDetailService productDetailService;
 
@@ -62,14 +62,13 @@ public class ProductDetailController {
     /**
      * 기존 상품 상세 정보를 업데이트합니다.
      *
-     * @param productDetailId 업데이트할 상품 상세 정보의 ID.
      * @param productDetailRequest 상품 상세 정보 요청 본문.
      * @return 상태와 데이터를 포함한 응답.
      */
     @Operation(summary = "상품 상세 정보 업데이트")
-    @PutMapping("/{productDetailId}")
-    public ResponseEntity<ProductDetailResponse> updateProductDetail(@PathVariable("productDetailId") Long productDetailId, @RequestBody ProductDetailRequest productDetailRequest) {
-        ProductDetailResponse productDetailResponse = productDetailService.updateProductDetail(productDetailId, productDetailRequest);
+    @PutMapping("/update")
+    public ResponseEntity<ProductDetailResponse> updateProductDetail(@RequestBody ProductDetailRequest productDetailRequest) {
+        ProductDetailResponse productDetailResponse = productDetailService.updateProductDetail( productDetailRequest);
 
         if (productDetailResponse.isSuccess()) {
             return new ResponseEntity<>(productDetailResponse, HttpStatus.OK);
@@ -85,8 +84,8 @@ public class ProductDetailController {
      * @return 삭제 성공 메시지와 함께하는 응답.
      */
     @Operation(summary = "상품 상세 정보 삭제")
-    @DeleteMapping("/{productDetailId}")
-    public ResponseEntity<String> removeProductDetail(@PathVariable("productDetailId") Long productDetailId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> removeProductDetail(@RequestBody Long productDetailId) {
         productDetailService.removeProductDetail(productDetailId);
         return new ResponseEntity<>("Product Detail removed successfully.", HttpStatus.OK);
     }

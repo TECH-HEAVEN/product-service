@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/products")
+@RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -76,14 +76,13 @@ public class ProductController {
     /**
      * 기존 상품 정보를 업데이트합니다.
      *
-     * @param productId 업데이트할 상품의 ID.
      * @param productRequest 상품 상세 정보를 포함한 요청 본문.
      * @return 상태와 데이터를 포함한 응답.
      */
     @Operation(summary = "상품 정보 업데이트")
-    @PutMapping("/{productId}")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductRequest productRequest) {
-        ProductResponse productResponse = productService.updateProduct(productId, productRequest);
+    @PutMapping("/update")
+    public ResponseEntity<ProductResponse> updateProduct( @RequestBody ProductRequest productRequest) {
+        ProductResponse productResponse = productService.updateProduct(productRequest);
         if (productResponse.isSuccess()) {
             return new ResponseEntity<>(productResponse, HttpStatus.OK);
         } else {
@@ -98,8 +97,8 @@ public class ProductController {
      * @return 삭제 성공 메시지와 함께하는 응답.
      */
     @Operation(summary = "상품 삭제")
-    @DeleteMapping("/{productId}")
-    public ResponseEntity<String> removeProduct(@PathVariable("productId") Long productId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> removeProduct(@RequestBody Long productId) {
         productService.removeProduct(productId);
         return new ResponseEntity<>("Product removed successfully.", HttpStatus.OK);
     }
@@ -111,8 +110,8 @@ public class ProductController {
      * @return 삭제 성공 메시지와 함께하는 응답.
      */
     @Operation(summary = "상품 및 상품 세부 정보 삭제")
-    @DeleteMapping("/{productId}/details")
-    public ResponseEntity<String> removeProductAndDetails(@PathVariable("productId") Long productId) {
+    @DeleteMapping("/delete/all")
+    public ResponseEntity<String> removeProductAndDetails(@RequestBody Long productId) {
         productService.removeProductAndDetails(productId);
         return new ResponseEntity<>("Product and product Details removed successfully.", HttpStatus.OK);
     }

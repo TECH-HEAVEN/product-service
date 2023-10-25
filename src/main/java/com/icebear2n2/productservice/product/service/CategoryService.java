@@ -72,22 +72,22 @@ public class CategoryService {
 
 //    TODO: UPDATE
 
-    public CategoryResponse updateCategory(Long categoryId, CategoryRequest categoryRequest) {
-        if (!categoryRepository.existsById(categoryId)) {
+    public CategoryResponse updateCategory(CategoryRequest categoryRequest) {
+        if (!categoryRepository.existsById(categoryRequest.getCategoryId())) {
             return CategoryResponse.failure(ErrorCode.CATEGORY_NOT_FOUND.toString());
         }
 
         List<Category> categoriesWithSameName = categoryRepository.findByCategoryNameContaining(categoryRequest.getCategoryName());
 
         boolean isNameTakenByAnotherCategory = categoriesWithSameName.stream()
-                .anyMatch(category -> !category.getCategoryId().equals(categoryId));
+                .anyMatch(category -> !category.getCategoryId().equals(categoryRequest.getCategoryId()));
 
         if (isNameTakenByAnotherCategory) {
             return CategoryResponse.failure(ErrorCode.DUPLICATED_CATEGORY_NAME.toString());
         }
 
         try {
-            Category existingCategory = categoryRepository.findById(categoryId)
+            Category existingCategory = categoryRepository.findById(categoryRequest.getCategoryId())
                     .orElseThrow(() -> new ProductServiceException(ErrorCode.CATEGORY_NOT_FOUND));
             categoryRequest.updateCategoryIfNotNull(existingCategory);
             categoryRepository.save(existingCategory);

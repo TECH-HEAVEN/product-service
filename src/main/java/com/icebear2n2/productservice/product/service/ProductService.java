@@ -114,9 +114,9 @@ public class ProductService {
     }
 
     //   TODO: UPDATE
-    public ProductResponse updateProduct(Long productId, ProductRequest productRequest) {
+    public ProductResponse updateProduct(ProductRequest productRequest) {
 
-        if (!productRepository.existsByProductId(productId)) {
+        if (!productRepository.existsByProductId(productRequest.getProductId())) {
             return ProductResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
         }
 
@@ -125,7 +125,7 @@ public class ProductService {
         }
 
         try {
-            Product existingProduct = productRepository.findById(productId)
+            Product existingProduct = productRepository.findById(productRequest.getProductId())
                     .orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND));
             productRequest.updateProductIfNotNull(existingProduct, categoryRepository);
             productRepository.save(existingProduct);

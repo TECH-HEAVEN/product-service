@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Schema(description = "카테고리 생성 및 업데이트 요청 모델")
 public class CategoryRequest {
+    @Schema(description = "카테고리 ID")
+    private Long categoryId;
     @Schema(description = "카테고리 이름", example = "프로그래밍 도서")
     private String categoryName;
 
