@@ -1,5 +1,6 @@
 package com.icebear2n2.productservice.domain.dto;
 
+import com.icebear2n2.productservice.domain.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,17 @@ public class ProductDTO {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private List<ProductDetailDTO> productDetails;
+
+    public ProductDTO(Product product) {
+        this.productId = product.getProductId();
+        this.category = new CategoryDTO(product.getCategory());
+        this.productName = product.getProductName();
+        this.productPrice = product.getProductPrice();
+        this.discountPrice = product.getDiscountPrice();
+        this.saleStartDate = product.getSaleStartDate();
+        this.saleEndDate = product.getSaleEndDate();
+        this.createdAt = product.getCreatedAt();
+        this.updatedAt = product.getUpdatedAt();
+        this.productDetails = product.getProductDetails().stream().map(ProductDetailDTO::new).toList();
+    }
 }

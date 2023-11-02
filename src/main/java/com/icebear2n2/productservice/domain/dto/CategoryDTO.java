@@ -1,5 +1,6 @@
 package com.icebear2n2.productservice.domain.dto;
 
+import com.icebear2n2.productservice.domain.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +17,11 @@ public class CategoryDTO {
     private String categoryName;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+
+    public CategoryDTO(Category category) {
+        this.categoryId = category.getCategoryId();
+        this.categoryName = category.getCategoryName();
+        this.createdAt = category.getCreatedAt();
+        this.updatedAt = category.getUpdatedAt();
+    }
 }
