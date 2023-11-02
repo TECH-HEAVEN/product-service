@@ -1,6 +1,6 @@
 package com.icebear2n2.productservice.domain.response;
 
-import com.icebear2n2.productservice.domain.entity.Product;
+import com.icebear2n2.productservice.domain.dto.ProductDTO;
 import com.icebear2n2.productservice.domain.entity.ProductDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class ProductDetailResponse {
     public static class ProductDetailData {
 
         @Schema(description = "상품 정보")
-        private Product product;
+        private ProductDTO product;
 
         @Schema(description = "상품 색상 목록", example = "[\"Red\", \"Blue\"]")
         private List<String> productColors;
@@ -52,7 +52,7 @@ public class ProductDetailResponse {
         private String updatedAt;
 
         public ProductDetailData(ProductDetail productDetail) {
-            this.product = productDetail.getProduct();
+            this.product = new ProductDTO(productDetail.getProduct());
             this.productColors = productDetail.getProductColors() != null ? productDetail.getProductColors() : null;
             this.productSizes = productDetail.getProductSizes() != null ? productDetail.getProductSizes() : null;
             this.stockQuantity = productDetail.getStockQuantity();
