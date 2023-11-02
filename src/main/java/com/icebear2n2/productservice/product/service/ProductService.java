@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
     private final CategoryRepository categoryRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
 
     public ProductResponse createProduct(ProductRequest productRequest) {
@@ -43,7 +43,7 @@ public class ProductService {
             Product savedProduct = productRepository.save(product);
             return ProductResponse.success(savedProduct);
         } catch (Exception e) {
-            LOGGER.error("Error occurred while creating product", e);
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             return ProductResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
@@ -135,7 +135,7 @@ public class ProductService {
             productRepository.save(existingProduct);
             return ProductResponse.success(existingProduct);
         } catch (Exception e) {
-            LOGGER.info("ERROR OCCURS {}", e.toString());
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             return ProductResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
@@ -149,6 +149,7 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) {
             throw new ProductServiceException(ErrorCode.PRODUCT_HAS_RELATED_PRODUCT_DETAIL);
         } catch (Exception e) {
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }

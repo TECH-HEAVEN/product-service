@@ -9,6 +9,8 @@ import com.icebear2n2.productservice.domain.response.ProductDetailResponse;
 import com.icebear2n2.productservice.exception.ErrorCode;
 import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProductDetailService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductDetailService.class);
     private final ProductDetailRepository productDetailRepository;
     private final ProductRepository productRepository;
 
@@ -35,6 +38,7 @@ public class ProductDetailService {
             productDetail.setProduct(product);
             return ProductDetailResponse.success(productDetailRepository.save(productDetail));
         } catch (Exception e) {
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             return ProductDetailResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
@@ -91,6 +95,7 @@ public class ProductDetailService {
             productDetailRepository.save(existingProductDetail);
             return ProductDetailResponse.success(existingProductDetail);
         } catch (Exception e) {
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             return ProductDetailResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
@@ -102,6 +107,7 @@ public class ProductDetailService {
         try {
             productDetailRepository.deleteById(productDetailId);
         } catch (Exception e) {
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }

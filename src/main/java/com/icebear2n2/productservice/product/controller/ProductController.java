@@ -17,13 +17,7 @@ import java.sql.Timestamp;
 public class ProductController {
     private final ProductService productService;
 
-    /**
-     * 새로운 상품을 생성합니다.
-     *
-     * @param productRequest 상품 상세 정보를 포함한 요청 본문.
-     * @return 상태와 데이터를 포함한 응답.
-     */
-    @Operation(summary = "새로운 상품 생성")
+
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = productService.createProduct(productRequest);
@@ -34,12 +28,7 @@ public class ProductController {
         }
     }
 
-    /**
-     * 상품 이름, 카테고리, 가격 등의 조건을 기반으로 상품을 검색합니다.
-     *
-     * @return 조건에 맞는 상품 목록.
-     */
-    @Operation(summary = "상품 검색")
+
     @GetMapping
     public ResponseEntity<?> getProducts(
             @RequestParam(required = false) String productName,
@@ -73,13 +62,7 @@ public class ProductController {
         }
     }
 
-    /**
-     * 기존 상품 정보를 업데이트합니다.
-     *
-     * @param productRequest 상품 상세 정보를 포함한 요청 본문.
-     * @return 상태와 데이터를 포함한 응답.
-     */
-    @Operation(summary = "상품 정보 업데이트")
+
     @PutMapping("/update")
     public ResponseEntity<ProductResponse> updateProduct( @RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = productService.updateProduct(productRequest);
@@ -90,26 +73,14 @@ public class ProductController {
         }
     }
 
-    /**
-     * 상품을 삭제합니다.
-     *
-     * @param productId 삭제할 상품의 ID.
-     * @return 삭제 성공 메시지와 함께하는 응답.
-     */
-    @Operation(summary = "상품 삭제")
+
     @DeleteMapping("/delete")
     public ResponseEntity<String> removeProduct(@RequestBody Long productId) {
         productService.removeProduct(productId);
         return new ResponseEntity<>("Product removed successfully.", HttpStatus.OK);
     }
 
-    /**
-     * 상품과 그에 관련된 상품 세부 정보를 삭제합니다.
-     *
-     * @param productId 삭제할 상품의 ID.
-     * @return 삭제 성공 메시지와 함께하는 응답.
-     */
-    @Operation(summary = "상품 및 상품 세부 정보 삭제")
+
     @DeleteMapping("/delete/all")
     public ResponseEntity<String> removeProductAndDetails(@RequestBody Long productId) {
         productService.removeProductAndDetails(productId);
