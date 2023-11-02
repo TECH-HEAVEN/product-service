@@ -7,7 +7,11 @@ import com.icebear2n2.productservice.domain.response.CategoryResponse;
 import com.icebear2n2.productservice.exception.ErrorCode;
 import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
 
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
@@ -27,34 +32,18 @@ public class CategoryService {
         try {
             return CategoryResponse.success(categoryRepository.save(categoryRequest.toEntity()));
         } catch (Exception e) {
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             return CategoryResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
 
-    public List<CategoryResponse.CategoryData> findCategoriesCreatedAfter(Timestamp createdAt) {
-        return categoryRepository.findByCreatedAtAfter(createdAt)
-                .stream()
-                .map(CategoryResponse.CategoryData::new)
-                .collect(Collectors.toList());
+    public Page<CategoryResponse.CategoryData> findByCategoryNameContaining(String categoryName, PageRequest pageRequest) {
+        Page<Category> all = categoryRepository.findAllByCategoryNameContaining(categoryName, pageRequest);
+        return all.map(CategoryResponse.CategoryData::new);
+
     }
 
-    public List<CategoryResponse.CategoryData> findCategoriesUpdatedAfter(Timestamp updatedAt) {
-        return categoryRepository.findByUpdatedAtAfter(updatedAt)
-                .stream()
-                .map(CategoryResponse.CategoryData::new)
-                .collect(Collectors.toList());
-    }
 
-    public List<CategoryResponse.CategoryData> findCategoriesByNameContaining(String keyword) {
-        return categoryRepository.findByCategoryNameContaining(keyword)
-                .stream()
-                .map(CategoryResponse.CategoryData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<CategoryResponse.CategoryData> findAllCategories() {
-        return categoryRepository.findAll().stream().map(CategoryResponse.CategoryData::new).collect(Collectors.toList());
-    }
 
 //    TODO: UPDATE
 
@@ -62,6 +51,7 @@ public class CategoryService {
         if (!categoryRepository.existsById(categoryRequest.getCategoryId())) {
             return CategoryResponse.failure(ErrorCode.CATEGORY_NOT_FOUND.toString());
         }
+
 
         List<Category> categoriesWithSameName = categoryRepository.findByCategoryNameContaining(categoryRequest.getCategoryName());
 
@@ -79,6 +69,7 @@ public class CategoryService {
             categoryRepository.save(existingCategory);
             return CategoryResponse.success(existingCategory);
         } catch (Exception e) {
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             return CategoryResponse.failure(ErrorCode.INTERNAL_SERVER_ERROR.toString());
         }
     }
@@ -90,8 +81,10 @@ public class CategoryService {
         try {
             categoryRepository.deleteById(categoryId);
         } catch (DataIntegrityViolationException e) {
+            LOGGER.info("DATA_INTEGRITY_VIOLATION_EXCEPTION: {}", e.toString());
             throw new ProductServiceException(ErrorCode.CATEGORY_HAS_RELATED_PRODUCTS);
         } catch (Exception e) {
+            LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
