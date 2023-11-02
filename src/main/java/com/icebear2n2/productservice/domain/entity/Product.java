@@ -38,6 +38,10 @@ public class Product {
     @JsonManagedReference
     private List<ProductDetail> productDetails;
 
+//    @OneToMany(mappedBy = "product")
+//    private List<CartItem> cartItems;
+
+
     public void setCategory(Category category) {
         this.category = category;
     }
@@ -48,5 +52,17 @@ public class Product {
 
     public void setProductPrice(Integer productPrice) {
         this.productPrice = productPrice;
+    }
+
+    public void setDiscountPrice(Integer discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    public void setSaleStartDate(Timestamp saleStartDate) {
+        this.saleStartDate = saleStartDate;
+    }
+
+    public void setSaleEndDate(Timestamp saleEndDate) {
+        this.saleEndDate = saleEndDate;
     }
 }
