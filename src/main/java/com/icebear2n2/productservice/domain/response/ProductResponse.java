@@ -1,11 +1,15 @@
 package com.icebear2n2.productservice.domain.response;
 
+import com.icebear2n2.productservice.domain.dto.ProductDetailDTO;
 import com.icebear2n2.productservice.domain.entity.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,35 +25,18 @@ public class ProductResponse {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    @Schema(description = "상품 데이터 내용")
     public static class ProductData {
-
-        @Schema(description = "상품 ID", example = "1")
         private Long productId;
-
-        @Schema(description = "카테고리 이름", example = "하드웨어")
         private String categoryName;
-
-        @Schema(description = "상품 이름", example = "시놀로지 NAS")
         private String productName;
 
-        @Schema(description = "상품 가격", example = "1000000")
         private Integer productPrice;
-
-        @Schema(description = "할인 가격", example = "900000")
         private Integer discountPrice;
-
-        @Schema(description = "세일 시작일", example = "2023-01-01T10:00:00.000Z")
-        private String saleStartDate;
-
-        @Schema(description = "세일 종료일", example = "2023-01-10T10:00:00.000Z")
-        private String saleEndDate;
-
-        @Schema(description = "생성일", example = "2023-01-01T10:00:00.000Z")
-        private String createdAt;
-
-        @Schema(description = "수정일", example = "2023-01-10T10:00:00.000Z")
-        private String updatedAt;
+        private Timestamp saleStartDate;
+        private Timestamp saleEndDate;
+        private Timestamp createdAt;
+        private Timestamp updatedAt;
+        private List<ProductDetailDTO> productDetails;
 
         public ProductData(Product product) {
             this.productId = product.getProductId();
@@ -57,10 +44,11 @@ public class ProductResponse {
             this.productName = product.getProductName();
             this.productPrice = product.getProductPrice();
             this.discountPrice = product.getDiscountPrice();
-            this.saleStartDate = product.getSaleStartDate() != null ? product.getSaleStartDate().toString() : null;
-            this.saleEndDate = product.getSaleEndDate() != null ? product.getSaleEndDate().toString() : null;
-            this.createdAt = product.getCreatedAt().toString();
-            this.updatedAt = product.getUpdatedAt().toString();
+            this.saleStartDate = product.getSaleStartDate() != null ? product.getSaleStartDate() : null;
+            this.saleEndDate = product.getSaleEndDate() != null ? product.getSaleEndDate() : null;
+            this.createdAt = product.getCreatedAt();
+            this.updatedAt = product.getUpdatedAt();
+            this.productDetails = product.getProductDetails() != null ? product.getProductDetails().stream().map(ProductDetailDTO::new).toList() : null;
         }
     }
 

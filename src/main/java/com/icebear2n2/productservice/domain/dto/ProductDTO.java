@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductDTO {
     private Long productId;
-    private CategoryDTO category;
+    private Long categoryId;
     private String productName;
     private Integer productPrice;
     private Integer discountPrice;
@@ -27,7 +27,7 @@ public class ProductDTO {
 
     public ProductDTO(Product product) {
         this.productId = product.getProductId();
-        this.category = new CategoryDTO(product.getCategory());
+        this.categoryId = product.getCategory().getCategoryId();
         this.productName = product.getProductName();
         this.productPrice = product.getProductPrice();
         this.discountPrice = product.getDiscountPrice();
@@ -35,6 +35,6 @@ public class ProductDTO {
         this.saleEndDate = product.getSaleEndDate();
         this.createdAt = product.getCreatedAt();
         this.updatedAt = product.getUpdatedAt();
-        this.productDetails = product.getProductDetails().stream().map(ProductDetailDTO::new).toList();
+        this.productDetails = product.getProductDetails() != null ? product.getProductDetails().stream().map(ProductDetailDTO::new).toList() : null;
     }
 }

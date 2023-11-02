@@ -23,7 +23,7 @@ public class ProductDetailDTO {
 
     public ProductDetailDTO(ProductDetail productDetail) {
         this.productDetailId = productDetail.getProductDetailId();
-        this.productId = productDetail.getProductDetailId();
+        this.productId = productDetail.getProduct().getProductId();
         this.productColors = productDetail.getProductColors();
         this.productSizes = productDetail.getProductSizes();
         this.stockQuantity = productDetail.getStockQuantity();

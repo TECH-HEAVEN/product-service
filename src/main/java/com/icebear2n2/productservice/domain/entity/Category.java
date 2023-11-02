@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "category")
@@ -24,7 +25,8 @@ public class Category {
     private Timestamp createdAt;
     @UpdateTimestamp
     private Timestamp updatedAt;
-
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }

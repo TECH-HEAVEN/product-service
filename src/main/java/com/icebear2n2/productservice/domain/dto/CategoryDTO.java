@@ -1,12 +1,15 @@
 package com.icebear2n2.productservice.domain.dto;
 
 import com.icebear2n2.productservice.domain.entity.Category;
+import com.icebear2n2.productservice.domain.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
