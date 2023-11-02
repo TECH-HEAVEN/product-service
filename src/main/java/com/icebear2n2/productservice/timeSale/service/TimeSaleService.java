@@ -9,6 +9,8 @@ import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -29,12 +31,11 @@ public class TimeSaleService {
     private final StringRedisTemplate stringRedisTemplate;
     private final ProductRepository productRepository;
 
-    public List<ProductResponse.ProductData> getProductStaredTimeSale() {
+    public Page<ProductResponse.ProductData> getProductStaredTimeSale(PageRequest pageRequest) {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        return productRepository.findBySaleStartDateBeforeAndSaleEndDateAfter(currentTimestamp, currentTimestamp)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
+        Page<Product> saleEndDateAfter = productRepository.findBySaleStartDateBeforeAndSaleEndDateAfter(currentTimestamp, currentTimestamp, pageRequest);
+        return saleEndDateAfter.map(ProductResponse.ProductData::new);
+
     }
 
     public ProductResponse startProductTimeSale(TimeSaleRequest timeSaleRequest) {
