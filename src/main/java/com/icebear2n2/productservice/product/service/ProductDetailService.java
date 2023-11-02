@@ -4,13 +4,17 @@ import com.icebear2n2.productservice.domain.entity.Product;
 import com.icebear2n2.productservice.domain.entity.ProductDetail;
 import com.icebear2n2.productservice.domain.repository.ProductDetailRepository;
 import com.icebear2n2.productservice.domain.repository.ProductRepository;
+import com.icebear2n2.productservice.domain.request.ProductDetailIDRequest;
 import com.icebear2n2.productservice.domain.request.ProductDetailRequest;
+import com.icebear2n2.productservice.domain.request.ProductIDRequest;
 import com.icebear2n2.productservice.domain.response.ProductDetailResponse;
 import com.icebear2n2.productservice.exception.ErrorCode;
 import com.icebear2n2.productservice.exception.ProductServiceException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -43,40 +47,10 @@ public class ProductDetailService {
         }
     }
 
-    public List<ProductDetailResponse.ProductDetailData> findProductDetailsByColor(String color) {
-        return productDetailRepository.findByProductColorsContains(color)
-                .stream()
-                .map(ProductDetailResponse.ProductDetailData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductDetailResponse.ProductDetailData> findProductDetailsBySize(String size) {
-        return productDetailRepository.findByProductSizesContains(size)
-                .stream()
-                .map(ProductDetailResponse.ProductDetailData::new)
-                .collect(Collectors.toList());
-    }
-
-
-    public List<ProductDetailResponse.ProductDetailData> findProductDetailsUpdatedAfter(Timestamp updatedAt) {
-        return productDetailRepository.findByUpdatedAtAfter(updatedAt)
-                .stream()
-                .map(ProductDetailResponse.ProductDetailData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductDetailResponse.ProductDetailData> findProductDetailsByColorAndSize(String color, String size) {
-        return productDetailRepository.findByProductColorsContainsAndProductSizesContains(color, size)
-                .stream()
-                .map(ProductDetailResponse.ProductDetailData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductDetailResponse.ProductDetailData> getAllProductDetails() {
-       return productDetailRepository.findAll()
-                .stream()
-                .map(ProductDetailResponse.ProductDetailData::new)
-                .collect(Collectors.toList());
+    public Page<ProductDetailResponse.ProductDetailData> findAllByProduct(ProductIDRequest productIDRequest, PageRequest pageRequest) {
+        Product product = productRepository.findById(productIDRequest.getProductId()).orElseThrow(() -> new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND));
+        Page<ProductDetail> all = productDetailRepository.findAllByProduct(product, pageRequest);
+        return all.map(ProductDetailResponse.ProductDetailData::new);
     }
 
     public ProductDetailResponse updateProductDetail(ProductDetailRequest productDetailRequest) {
@@ -100,12 +74,12 @@ public class ProductDetailService {
         }
     }
 
-    public void removeProductDetail(Long productDetailId) {
-        if (!productDetailRepository.existsById(productDetailId)) {
+    public void removeProductDetail(ProductDetailIDRequest productDetailIDRequest) {
+        if (!productDetailRepository.existsById(productDetailIDRequest.getProductDetailId())) {
             throw new ProductServiceException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
         }
         try {
-            productDetailRepository.deleteById(productDetailId);
+            productDetailRepository.deleteById(productDetailIDRequest.getProductDetailId());
         } catch (Exception e) {
             LOGGER.info("INTERNAL_SERVER_ERROR: {}", e.toString());
             throw new ProductServiceException(ErrorCode.INTERNAL_SERVER_ERROR);

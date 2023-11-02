@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -49,74 +51,15 @@ public class ProductService {
     }
 
 
-    public ProductResponse findProductByName(String productName) {
-        Product product = productRepository.findByProductName(productName);
-        if (product != null) {
-            return ProductResponse.success(product);
-        }
-        return ProductResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
-    }
-
-    public List<ProductResponse.ProductData> findProductsByPrice(Integer price) {
-        return productRepository.findByProductPriceGreaterThanEqual(price)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductResponse.ProductData> findProductsByDiscountPrice(Integer discountPrice) {
-        return productRepository.findByDiscountPriceLessThanEqual(discountPrice)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductResponse.ProductData> findProductsBySaleStartDate(Timestamp date) {
-        return productRepository.findBySaleStartDateBefore(date)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductResponse.ProductData> findProductsBySaleEndDate(Timestamp date) {
-        return productRepository.findBySaleEndDateAfter(date)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductResponse.ProductData> findProductsByCategory(String categoryName) {
-        return productRepository.findByCategoryContaining(categoryName)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductResponse.ProductData> findProductsAddedAfter(Timestamp createdAt) {
-        return productRepository.findByCreatedAtAfter(createdAt)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductResponse.ProductData> findProductsBySaleStartAndEndDate(Timestamp startTimestamp, Timestamp endTimestamp) {
-        return productRepository.findBySaleStartDateBeforeAndSaleEndDateAfter(startTimestamp, endTimestamp)
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProductResponse.ProductData> getAllProducts() {
-        return productRepository.findAll()
-                .stream()
-                .map(ProductResponse.ProductData::new)
-                .collect(Collectors.toList());
+    public Page<ProductResponse.ProductData> findAll(PageRequest pageRequest) {
+        Page<Product> all = productRepository.findAll(pageRequest);
+        return all.map(ProductResponse.ProductData::new);
     }
 
     //   TODO: UPDATE
     public ProductResponse updateProduct(ProductRequest productRequest) {
 
-        if (!productRepository.existsByProductId(productRequest.getProductId())) {
+        if (!productRepository.existsById(productRequest.getProductId())) {
             return ProductResponse.failure(ErrorCode.PRODUCT_NOT_FOUND.toString());
         }
 
@@ -141,7 +84,7 @@ public class ProductService {
     }
 
     public void removeProduct(Long productId) {
-        if (!productRepository.existsByProductId(productId)) {
+        if (!productRepository.existsById(productId)) {
             throw new ProductServiceException(ErrorCode.PRODUCT_NOT_FOUND);
         }
         try {

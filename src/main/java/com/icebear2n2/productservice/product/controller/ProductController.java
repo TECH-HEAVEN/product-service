@@ -1,15 +1,15 @@
 package com.icebear2n2.productservice.product.controller;
 
+import com.icebear2n2.productservice.domain.request.ProductIDRequest;
 import com.icebear2n2.productservice.domain.request.ProductRequest;
 import com.icebear2n2.productservice.domain.response.ProductResponse;
 import com.icebear2n2.productservice.product.service.ProductService;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.Timestamp;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,36 +30,13 @@ public class ProductController {
 
 
     @GetMapping
-    public ResponseEntity<?> getProducts(
-            @RequestParam(required = false) String productName,
-            @RequestParam(required = false) String categoryName,
-            @RequestParam(required = false) Integer price,
-            @RequestParam(required = false) Integer discountPrice,
-            @RequestParam(required = false) Timestamp saleStartDate,
-            @RequestParam(required = false) Timestamp saleEndDate,
-            @RequestParam(required = false) Timestamp createdAt,
-            @RequestParam(required = false) Timestamp saleStartTimestamp,
-            @RequestParam(required = false) Timestamp saleEndTimestamp) {
+    public ResponseEntity<Page<ProductResponse.ProductData>> getAllProducts(
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page) {
 
-        if (productName != null) {
-            return new ResponseEntity<>(productService.findProductByName(productName), HttpStatus.OK);
-        } else if (categoryName != null) {
-            return new ResponseEntity<>(productService.findProductsByCategory(categoryName), HttpStatus.OK);
-        } else if (price != null) {
-            return new ResponseEntity<>(productService.findProductsByPrice(price), HttpStatus.OK);
-        } else if (discountPrice != null) {
-            return new ResponseEntity<>(productService.findProductsByDiscountPrice(discountPrice), HttpStatus.OK);
-        } else if (saleStartDate != null) {
-            return new ResponseEntity<>(productService.findProductsBySaleStartDate(saleStartDate), HttpStatus.OK);
-        } else if (saleEndDate != null) {
-            return new ResponseEntity<>(productService.findProductsBySaleEndDate(saleEndDate), HttpStatus.OK);
-        } else if (createdAt != null) {
-            return new ResponseEntity<>(productService.findProductsAddedAfter(createdAt), HttpStatus.OK);
-        } else if (saleStartTimestamp != null && saleEndTimestamp != null) {
-            return new ResponseEntity<>(productService.findProductsBySaleStartAndEndDate(saleStartTimestamp, saleEndTimestamp), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
-        }
+        PageRequest request = PageRequest.of(page, size);
+
+        return new ResponseEntity<>(productService.findAll(request), HttpStatus.OK);
     }
 
 
@@ -75,15 +52,15 @@ public class ProductController {
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> removeProduct(@RequestBody Long productId) {
-        productService.removeProduct(productId);
+    public ResponseEntity<String> removeProduct(@RequestBody ProductIDRequest productIDRequest) {
+        productService.removeProduct(productIDRequest.getProductId());
         return new ResponseEntity<>("Product removed successfully.", HttpStatus.OK);
     }
 
 
     @DeleteMapping("/delete/all")
-    public ResponseEntity<String> removeProductAndDetails(@RequestBody Long productId) {
-        productService.removeProductAndDetails(productId);
+    public ResponseEntity<String> removeProductAndDetails(@RequestBody ProductIDRequest productIDRequest) {
+        productService.removeProductAndDetails(productIDRequest.getProductId());
         return new ResponseEntity<>("Product and product Details removed successfully.", HttpStatus.OK);
     }
 }

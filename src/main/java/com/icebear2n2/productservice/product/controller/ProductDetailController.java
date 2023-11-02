@@ -1,10 +1,14 @@
 package com.icebear2n2.productservice.product.controller;
 
+import com.icebear2n2.productservice.domain.request.ProductDetailIDRequest;
 import com.icebear2n2.productservice.domain.request.ProductDetailRequest;
+import com.icebear2n2.productservice.domain.request.ProductIDRequest;
 import com.icebear2n2.productservice.domain.response.ProductDetailResponse;
 import com.icebear2n2.productservice.product.service.ProductDetailService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,22 +34,13 @@ public class ProductDetailController {
 
 
     @GetMapping
-    public ResponseEntity<?> getProductDetails(
-            @RequestParam(required = false) String color,
-            @RequestParam(required = false) String size,
-            @RequestParam(required = false) Timestamp updatedAt) {
+    public ResponseEntity<Page<ProductDetailResponse.ProductDetailData>> getAllByProductDetails(
+            @RequestBody ProductIDRequest productIDRequest,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page) {
+        PageRequest request = PageRequest.of(page, size);
 
-        if (color != null && size == null) {
-            return new ResponseEntity<>(productDetailService.findProductDetailsByColor(color), HttpStatus.OK);
-        } else if (size != null && color == null) {
-            return new ResponseEntity<>(productDetailService.findProductDetailsBySize(size), HttpStatus.OK);
-        } else if (updatedAt != null) {
-            return new ResponseEntity<>(productDetailService.findProductDetailsUpdatedAfter(updatedAt), HttpStatus.OK);
-        } else if (color != null) {
-            return new ResponseEntity<>(productDetailService.findProductDetailsByColorAndSize(color, size), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(productDetailService.getAllProductDetails(), HttpStatus.OK);
-        }
+        return new ResponseEntity<>(productDetailService.findAllByProduct(productIDRequest, request), HttpStatus.OK);
     }
 
 
@@ -62,8 +57,8 @@ public class ProductDetailController {
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> removeProductDetail(@RequestBody Long productDetailId) {
-        productDetailService.removeProductDetail(productDetailId);
+    public ResponseEntity<String> removeProductDetail(@RequestBody ProductDetailIDRequest productDetailIDRequest) {
+        productDetailService.removeProductDetail(productDetailIDRequest);
         return new ResponseEntity<>("Product Detail removed successfully.", HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.icebear2n2.productservice.product.controller;
 
+import com.icebear2n2.productservice.domain.request.CategoryIDRequest;
 import com.icebear2n2.productservice.domain.request.CategoryRequest;
 import com.icebear2n2.productservice.domain.response.CategoryResponse;
 import com.icebear2n2.productservice.product.service.CategoryService;
@@ -57,8 +58,8 @@ public class CategoryController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> removeCategory(@RequestBody Long categoryId) {
-        categoryService.removeCategory(categoryId);
+    public ResponseEntity<String> removeCategory(@RequestBody CategoryIDRequest categoryIDRequest) {
+        categoryService.removeCategory(categoryIDRequest.getCategoryId());
         return new ResponseEntity<>("Category removed successfully.", HttpStatus.OK);
     }
 }
